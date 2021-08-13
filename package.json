@@ -1,0 +1,22 @@
+{
+  "name": "node-chat",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:izacgaldino23/node-chat.git",
+  "author": "izacgaldino23 <izacgaldino@outlook.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "socket.io": "^4.1.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/socket.io": "^3.0.2",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.3.5"
+  },
+  "scripts": {
+    "dev": "ts-node-dev --files app.ts"
+  }
+}
