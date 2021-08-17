@@ -13,7 +13,7 @@ io.on('connect', (socket: Socket) => {
 
 	socket.on('join', (params, callback) => {
 		const { name, room } = params
-		var msg = `Sala ${room} criada`
+		var msg = `Entrou na sala ${room}`
 
 		if (room in io.sockets.adapter.rooms) {
 			msg = `Entrou na sala ${room}`

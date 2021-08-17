@@ -62,7 +62,7 @@ function list () {
 
 function join () {
 	if (room) {
-		writeToScreen('<span class="msg">Você já está em uma sala use o comando <strong>!leave</strong> para sair da que você está</span><br/><br/>')
+		writeToScreen('<span class="msg">Você já está em uma sala use o comando <strong>leave</strong> para sair da que você está</span><br/><br/>')
 		return
 	}
 
@@ -70,7 +70,7 @@ function join () {
 	room = prompt("Room")
 
 	if (!name || !room || room == '' || name == '') {
-		writeToScreen(`<span class='msg'>Nome o sala inválida</span>`)
+		writeToScreen(`<span class='msg'>Nome ou sala inválida</span>`)
 	}
 
 	socket.emit('join', { name, room }, ({ msg }) => {
@@ -80,7 +80,7 @@ function join () {
 
 function leave () {
 	if (!room) {
-		writeToScreen('<span class="msg">Você não está em nenhuma sala use o comando <strong>!join</strong> para entrar em uma sala</span><br/><br/>')
+		writeToScreen('<span class="msg">Você não está em nenhuma sala use o comando <strong>join</strong> para entrar em uma sala</span><br/><br/>')
 		return
 	}
 
