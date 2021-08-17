@@ -1,0 +1,77 @@
+<head>
+	<meta charset="utf-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap" rel="stylesheet">
+</head>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        outline: none;
+        font-family: 'Ubuntu Mono';
+        font-size: 1.05em;
+    }
+
+    body {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background: rgb(25, 25, 25);
+        color: white;
+        overflow: hidden;
+        justify-content: space-between;
+    }
+
+    #mensagens {
+        width: 100%;
+        overflow: auto;
+        padding: 15px;
+    }
+
+    #escrever_box {
+        display: flex;
+        border-top: 1px solid rgba(255,255,255,.2);
+        align-items: center;
+    }
+
+    #escrever_box span {
+        padding-left: 10px;
+    }
+
+    #escrever {
+        padding: 20px 15px;
+        background: transparent;
+        color: white;
+        width: 100%;
+    }
+
+    .msg {
+        opacity: .75;
+        padding-bottom: 5px;
+        display: inline-block;
+    }
+
+    .me {
+        color: #09edc3
+    }
+</style>
+
+<body>
+    <div id="mensagens"></div>
+
+    <div id="escrever_box">
+        <span>>></span> <input id="escrever" placeholder="type something" autofocus />
+    </div>
+</body>
+
+<!-- test-io-client.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+<script>
+    
+</script>
+<script src="/client.js"></script>
