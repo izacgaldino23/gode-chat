@@ -58,6 +58,18 @@ io.on('connect', (socket: Socket) => {
 		callback({})
 	})
 
+	socket.on('image_to_room', (params, callback) => {
+		const { user, link, room } = params
+
+		if (!verifyUserLogin(user)) {
+			callback({ erro_msg: 'Você não está em nenhuma sala!' })
+			return
+		}
+
+		socket.to(room).emit('room_image', { link, user })
+		callback({})
+	})
+
 	socket.on('to_user', (params) => {
 		const { user, to, msg } = params
 

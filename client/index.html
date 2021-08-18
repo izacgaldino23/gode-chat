@@ -123,14 +123,24 @@
 <script type="text/template" id="my_message_template">
     <p class="msg me">
         <strong>#{{name}}</strong>:
-        <span class>{{msg}}</span>
+        {{#link}}
+            <img src="{{link}}" alt="Imagem enviada por {{name}}">
+        {{/link}}
+        {{^link}}
+            <span class>{{msg}}</span>
+        {{/link}}
     </p>
 </script>
 
 <script type="text/template" id="other_message_template">
     <p class="msg">
         <strong>#{{name}}</strong>:
-        <span class>{{msg}}</span>
+        {{#link}}
+            <img src="{{link}}" alt="Imagem enviada por {{name}}">
+        {{/link}}
+        {{^link}}
+            <span class>{{msg}}</span>
+        {{/link}}
     </p>
 </script>
 

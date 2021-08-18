@@ -2,9 +2,10 @@ const commands = {
 	'name': { args: 'seu_nome', description: 'Muda seu nome' },
 	'list': { args: '', description: 'Lista todas as salas' },
 	'join': { args: 'nome_da_sala', description: 'Entra em uma sala' },
+	'image': { args: 'link', description: 'Envia uma imagem' },
 	'clear': { args: '', description: 'Limpa janela de msgs' },
-	'leave': { args: '', description: 'Sair de uma sala' },
-	'help': { args: '', description: 'Mostrar comandos' },
+	'leave': { args: '', description: 'Sai de uma sala' },
+	'help': { args: '', description: 'Mostra comandos' },
 }
 
 let socket = io.connect('http://192.168.111.142:9080/');
@@ -22,6 +23,7 @@ function init () {
 	socket.on('join_msg', joinMsg)
 	socket.on('leave_msg', leaveMsg)
 	socket.on('change_name', changeName)
+	socket.on('room_image', roomImage)
 }
 
 function isCommand (command = '') {
@@ -55,6 +57,9 @@ function manageCommands (command = '', parts = []) {
 			break
 		case 'help':
 			help()
+			break
+		case 'image':
+			image(parts)
 			break
 	}
 }
@@ -148,6 +153,24 @@ function setName (parts = []) {
 	})
 }
 
+function image (parts = []) {
+	if (!room) {
+		writeToScreen(info_template.innerHTML, "Entre em alguma sala usando join nome_da_sala")
+	} else {
+		if (parts.length != 2) {
+			writeToScreen(info_template.innerHTML, { info: 'O formato do comando deve ser: image link' })
+			return
+		}
+
+		let link = parts[ 1 ]
+
+		let crypted = crypt(link)
+		socket.emit('image_to_room', { user: name, room, link: crypted }, () => {
+			writeToScreen(my_message_template.innerHTML, { name, link })
+		})
+	}
+}
+
 // ================ listening funtions
 function sendMsg (msg) {
 	let crypted = crypt(msg)
@@ -164,7 +187,7 @@ function sendMsg (msg) {
 
 function receiveMsg ({ msg, user }) {
 	let decrypted = decrypt(msg)
-	writeToScreen(other_message_template.innerHTML, { name: user, msg: decrypted })
+	writeToScreen(other_message_template.innerHTML, { name: user, link: decrypted })
 }
 
 function joinMsg ({ msg }) {
@@ -177,6 +200,11 @@ function leaveMsg ({ msg }) {
 
 function changeName ({ msg }) {
 	writeToScreen(info_template.innerHTML, { info: msg })
+}
+
+function roomImage ({ user, link }) {
+	let decrypted = decrypt(link)
+	writeToScreen(other_message_template.innerHTML, { name: user, msg: decrypted })
 }
 
 function crypt (msg = '') {
