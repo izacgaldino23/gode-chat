@@ -7,6 +7,10 @@ let rooms: Array<string> = []
 io.on('connect', (socket: Socket) => {
 	// console.log('Se conectou' + socket.id)
 
+	socket.on('in', ({ name }) => {
+		users[name] = socket.id
+	})
+
 	socket.on('list_rooms', (params, callback) => {
 		callback(rooms)
 	})
@@ -22,7 +26,6 @@ io.on('connect', (socket: Socket) => {
 		socket.to(room).emit('join_msg', { msg: `${name} entrou na sala` })
 
 		socket.join(room)
-		users[name] = socket.id
 
 		if (rooms.indexOf(room) === -1) {
 			rooms.push(room)
@@ -44,10 +47,12 @@ io.on('connect', (socket: Socket) => {
 
 		if (msg.length > 256) {
 			callback({ erro_msg: 'Mensagem não pode ter mais de 256 caracteres' })
+			return
 		}
 
 		if (!verifyUserLogin(user)) {
 			callback({ erro_msg: 'Você não está em nenhuma sala!' })
+			return
 		}
 
 		socket.to(room).emit('room_msg', { msg, user })
@@ -66,6 +71,34 @@ io.on('connect', (socket: Socket) => {
 		}
 
 		socket.to(users[to]).emit('private_msg', { msg })
+	})
+
+	socket.on('change_name', ({ old_name, name, room }, callback) => {
+		if (old_name) {
+			delete users[old_name]
+		}
+		users[name] = socket.id
+
+		if (room && room != '') {
+			socket.to(room).emit('change_name', { msg: `${old_name} agora é ${name}` })
+		}
+
+		callback()
+	})
+
+	socket.on('disconnect', () => {
+		let socket_id = socket.id
+		let user
+
+		for (let i in users) {
+			if (users[i] == socket_id) {
+				user = users[i]
+				break
+			}
+		}
+
+		delete users[user]
+		socket.emit('leave_msg', { msg: `${user} saiu` })
 	})
 })
 

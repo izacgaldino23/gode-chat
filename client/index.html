@@ -3,6 +3,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap" rel="stylesheet">
+    <title>Command Chat</title>
 </head>
 
 <style>
@@ -50,19 +51,94 @@
         width: 100%;
     }
 
-    .msg {
+    .aviso {
         opacity: .75;
         padding-bottom: 5px;
-        display: inline-block;
+        display: block;
+        word-wrap: break-word;
     }
 
-    .me {
+    .msg {
+        margin-bottom: 5px;
+        display: block;
+        word-wrap: break-word;
+    }
+
+    .msg span, .inout span {
+        opacity: .75;
+    }
+
+    .me strong {
         color: #09edc3
+    }
+
+    /* Scroll 1 */
+    *::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    *::-webkit-scrollbar-track {
+        background-color: rgba(0, 0, 0, 0.4);
+        border-radius: 10px;
+    }
+    *::-webkit-scrollbar-thumb {
+        background-color: rgba(255,255,255,.5);
+        border-radius: 10px;
     }
 </style>
 
+<script type="text/template" id="help_template">
+    <p>======== COMMANDS ========</p>
+    <br />
+    {{#commands}}
+    <p><strong>{{name}}</strong> {{description}}</p>
+    {{/commands}}
+    <br />
+    <p>==========================</p>
+    <br />
+</script>
+
+<script type="text/template" id="rooms_template">
+    <p>========= SALAS =========</p>
+    <br />
+    {{#rooms}}
+    <p>{{name}}</p>
+    {{/rooms}}
+    <br />
+    <p>=========================</p>
+    <br />
+</script>
+
+<script type="text/template" id="my_message_template">
+    <p class="msg me">
+        <strong>#{{name}}</strong>:
+        <span class>{{msg}}</span>
+    </p>
+</script>
+
+<script type="text/template" id="other_message_template">
+    <p class="msg">
+        <strong>#{{name}}</strong>:
+        <span class>{{msg}}</span>
+    </p>
+</script>
+
+<script type="text/template" id="info_template">
+    <p class="aviso">
+        {{info}}
+    </p>
+</script>
+
+<script type="text/template" id="inout_template">
+    <br>
+    <p class="inout">
+        >>> <span>{{msg}}</span>
+    </p>
+</script>
+
 <body>
-    <div id="mensagens"></div>
+    <div id="mensagens">
+    </div>
 
     <div id="escrever_box">
         <span>>></span> <input id="escrever" placeholder="type something" autofocus />
@@ -71,7 +147,5 @@
 
 <!-- test-io-client.html -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
-<script>
-    
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.1/mustache.min.js" integrity="sha512-3GRj7sme01zpWwRNPNy48Rda1bD9cq34lqYG5vb8ZXGc+wRqsoBJ3+AC25IYW5w5SrWlzHqIpNIxZt5QF9sXLg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="/client.js"></script>
