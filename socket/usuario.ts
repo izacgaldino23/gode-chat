@@ -5,7 +5,6 @@ let users: { [key: string]: any } = {}
 let rooms: Array<string> = []
 
 io.on('connect', (socket: Socket) => {
-	// console.log('Se conectou' + socket.id)
 
 	socket.on('in', ({ name }) => {
 		users[name] = socket.id
@@ -31,7 +30,7 @@ io.on('connect', (socket: Socket) => {
 			rooms.push(room)
 		}
 
-		callback({ msg })
+		callback({ msg, k: io.sockets.adapter.rooms.get(room)?.values().next().value })
 	})
 
 	socket.on('leave', (params) => {
@@ -86,19 +85,26 @@ io.on('connect', (socket: Socket) => {
 		callback()
 	})
 
-	socket.on('disconnect', () => {
+	socket.on('disconnecting', () => {
 		let socket_id = socket.id
-		let user
+		let user: string = ''
 
 		for (let i in users) {
 			if (users[i] == socket_id) {
-				user = users[i]
+				user = i
 				break
 			}
 		}
 
-		delete users[user]
-		socket.emit('leave_msg', { msg: `${user} saiu` })
+		if (user != '') {
+			delete users[user]
+
+			let tempRooms = Array.from(socket.rooms)
+
+			tempRooms.forEach(r => {
+				socket.to(r).emit('leave_msg', { msg: `${user} saiu` })
+			})
+		}
 	})
 })
 

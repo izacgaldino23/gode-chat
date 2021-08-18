@@ -3,7 +3,7 @@
 		"include": [
 			"mustache",
 			"dayjs",
-			"jquery"
+			"crypto-js"
 		]
 	}   
 }

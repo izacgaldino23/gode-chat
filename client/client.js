@@ -1,14 +1,14 @@
 const commands = {
-	'name': 'seu_nome -> Muda seu nome',
-	'list': '-> Lista todas as salas',
-	'join': 'nome_da_sala -> Entra em uma sala',
-	'clear': '-> Limpa janela de msgs',
-	'leave': '-> Sair de uma sala',
-	'help': '-> Mostrar comandos',
+	'name': { args: 'seu_nome', description: 'Muda seu nome' },
+	'list': { args: '', description: 'Lista todas as salas' },
+	'join': { args: 'nome_da_sala', description: 'Entra em uma sala' },
+	'clear': { args: '', description: 'Limpa janela de msgs' },
+	'leave': { args: '', description: 'Sair de uma sala' },
+	'help': { args: '', description: 'Mostrar comandos' },
 }
 
 let socket = io.connect('http://192.168.111.142:9080/');
-let name, room
+let name, room, key
 
 function init () {
 	help()
@@ -96,8 +96,9 @@ function join (parts = []) {
 
 	room = parts[ 1 ]
 
-	socket.emit('join', { name, room }, ({ msg }) => {
+	socket.emit('join', { name, room }, ({ msg, k }) => {
 		writeToScreen(info_template.innerHTML, { info: msg })
+		key = k
 	})
 }
 
@@ -121,7 +122,7 @@ function clear () {
 function help () {
 	let c = []
 	for (let i in commands) {
-		c.push({ name: i, description: commands[ i ] })
+		c.push({ name: i, args: commands[ i ].args, description: commands[ i ].description })
 	}
 
 	writeToScreen(help_template.innerHTML, { commands: c })
@@ -149,7 +150,9 @@ function setName (parts = []) {
 
 // ================ listening funtions
 function sendMsg (msg) {
-	socket.emit('to_room', { msg, user: name, room }, ({ erro_msg }) => {
+	let crypted = crypt(msg)
+
+	socket.emit('to_room', { msg: crypted, user: name, room }, ({ erro_msg }) => {
 		if (erro_msg) {
 			writeToScreen(info_template.innerHTML, { info: erro_msg })
 		} else {
@@ -160,7 +163,8 @@ function sendMsg (msg) {
 }
 
 function receiveMsg ({ msg, user }) {
-	writeToScreen(other_message_template.innerHTML, { name: user, msg })
+	let decrypted = decrypt(msg)
+	writeToScreen(other_message_template.innerHTML, { name: user, msg: decrypted })
 }
 
 function joinMsg ({ msg }) {
@@ -173,6 +177,18 @@ function leaveMsg ({ msg }) {
 
 function changeName ({ msg }) {
 	writeToScreen(info_template.innerHTML, { info: msg })
+}
+
+function crypt (msg = '') {
+	let encrypted = CryptoJS.AES.encrypt(msg, key).toString()
+
+	return encrypted
+}
+
+function decrypt (msg = '') {
+	let decrypted = CryptoJS.AES.decrypt(msg, key).toString(CryptoJS.enc.Utf8)
+
+	return decrypted
 }
 
 // ================= eventos componentes
@@ -203,7 +219,7 @@ window.addEventListener('focusin', (e) => {
 
 function writeToScreen (template, params) {
 	let temp = Mustache.render(template, params)
-	// console.log(temp)
+
 	mensagens.innerHTML += temp
 	mensagens.scrollTop = mensagens.scrollHeight
 }
