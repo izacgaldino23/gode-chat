@@ -10,6 +10,7 @@ io.on('connect', (socket: Socket) => {
 	socket.on('in', ({ name }, callback) => {
 		users[name] = socket.id
 		callback()
+		console.log(`+ ${name} entrou`)
 	})
 
 	socket.on('list_rooms', (params, callback) => {
@@ -32,6 +33,7 @@ io.on('connect', (socket: Socket) => {
 			rooms.push(room)
 		}
 
+		console.log(`>> ${name} entrou na sala ${room}`)
 		callback({ msg, k: io.sockets.adapter.rooms.get(room)?.values().next().value })
 	})
 
@@ -40,6 +42,7 @@ io.on('connect', (socket: Socket) => {
 
 		socket.to(room).emit('leave_msg', { msg: `${user} saiu da sala` })
 
+		console.log(`<< ${user} saiu da sala ${room}`)
 		socket.leave(room)
 	})
 
@@ -88,7 +91,6 @@ io.on('connect', (socket: Socket) => {
 
 	socket.on('change_name', ({ old_name, name, room }, callback) => {
 		if (name in users) {
-			console.log(users)
 			callback({ erro_msg: 'Nome já está sendo usado' })
 			return
 		}
@@ -102,6 +104,7 @@ io.on('connect', (socket: Socket) => {
 			socket.to(room).emit('change_name', { msg: `${old_name} agora é ${name}` })
 		}
 
+		console.log(`${old_name} agora é ${name}`)
 		callback({})
 	})
 
