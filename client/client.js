@@ -1,7 +1,7 @@
 const commands = {
 	'name': { args: 'seu_nome', description: 'Muda seu nome' },
 	'list': { args: '', description: 'Lista todas as salas' },
-	'join': { args: 'nome_da_sala', description: 'Entra em uma sala' },
+	'join': { args: 'nome_da_sala', description: 'Cria/Entra em uma sala' },
 	'image': { args: 'link', description: 'Envia uma imagem' },
 	'clear': { args: '', description: 'Limpa janela de msgs' },
 	'leave': { args: '', description: 'Sai de uma sala' },
@@ -16,7 +16,7 @@ function init () {
 	if (localStorage.name) {
 		name = localStorage.name
 		socket.emit('in', { name })
-		writeToScreen(info_template.innerHTML, { info: `Bem-vindo ${name} :D` })
+		writeToScreen(info_template, { info: `Bem-vindo ${name} :D` })
 	}
 
 	socket.on('room_msg', receiveMsg)
@@ -73,47 +73,47 @@ function list () {
 				salas.push({ name: r })
 			}
 
-			writeToScreen(rooms_template.innerHTML, { rooms: salas })
+			writeToScreen(rooms_template, { rooms: salas })
 		}
 	})
 }
 
 function join (parts = []) {
 	if (!name || name == '') {
-		writeToScreen(info_template.innerHTML, { info: 'Antes de entrar em uma sala escolha um nome usando o comando name seu_nome' })
+		writeToScreen(info_template, { info: 'Antes de entrar em uma sala escolha um nome usando o comando name seu_nome' })
 		return
 	}
 
 	if (room) {
-		writeToScreen(info_template.innerHTML, { info: 'Você já está em uma sala use o comando leave para sair da que você está' })
+		writeToScreen(info_template, { info: 'Você já está em uma sala use o comando leave para sair da que você está' })
 		return
 	}
 
 	if (parts.length != 2) {
-		writeToScreen(info_template.innerHTML, { info: 'O formato do comando deve ser: join nome_da_sala' })
+		writeToScreen(info_template, { info: 'O formato do comando deve ser: join nome_da_sala' })
 		return
 	}
 
 	if (!parts[ 1 ] || parts[ 1 ] == '') {
-		writeToScreen(info_template.innerHTML, { info: 'Nome da sala inválida' })
+		writeToScreen(info_template, { info: 'Nome da sala inválida' })
 		return
 	}
 
 	room = parts[ 1 ]
 
 	socket.emit('join', { name, room }, ({ msg, k }) => {
-		writeToScreen(info_template.innerHTML, { info: msg })
+		writeToScreen(info_template, { info: msg })
 		key = k
 	})
 }
 
 function leave () {
 	if (!room) {
-		writeToScreen(info_template.innerHTML, { info: 'Você não está em nenhuma sala use o comando join para entrar em uma sala' })
+		writeToScreen(info_template, { info: 'Você não está em nenhuma sala use o comando join para entrar em uma sala' })
 		return
 	}
 
-	writeToScreen(info_template.innerHTML, { info: `Você saiu da sala ${room}` })
+	writeToScreen(info_template, { info: `Você saiu da sala ${room}` })
 
 	socket.emit('leave', { user: name, room })
 
@@ -130,17 +130,17 @@ function help () {
 		c.push({ name: i, args: commands[ i ].args, description: commands[ i ].description })
 	}
 
-	writeToScreen(help_template.innerHTML, { commands: c })
+	writeToScreen(help_template, { commands: c })
 }
 
 function setName (parts = []) {
 	if (parts.length != 2) {
-		writeToScreen(info_template.innerHTML, { info: 'O formato do comando deve ser: name seu_nome' })
+		writeToScreen(info_template, { info: 'O formato do comando deve ser: name seu_nome' })
 		return
 	}
 
 	if (!parts[ 1 ] || parts[ 1 ] == '') {
-		writeToScreen(info_template.innerHTML, { info: 'Nome inválido' })
+		writeToScreen(info_template, { info: 'Nome inválido' })
 		return
 	}
 	let old_name = name
@@ -149,16 +149,16 @@ function setName (parts = []) {
 	localStorage.name = name
 
 	socket.emit('change_name', { old_name, name, room }, () => {
-		writeToScreen(info_template.innerHTML, { info: `Nome alterado para ${name}` })
+		writeToScreen(info_template, { info: `Nome alterado para ${name}` })
 	})
 }
 
 function image (parts = []) {
 	if (!room) {
-		writeToScreen(info_template.innerHTML, "Entre em alguma sala usando join nome_da_sala")
+		writeToScreen(info_template, "Entre em alguma sala usando join nome_da_sala")
 	} else {
 		if (parts.length != 2) {
-			writeToScreen(info_template.innerHTML, { info: 'O formato do comando deve ser: image link' })
+			writeToScreen(info_template, { info: 'O formato do comando deve ser: image link' })
 			return
 		}
 
@@ -166,7 +166,7 @@ function image (parts = []) {
 
 		let crypted = crypt(link)
 		socket.emit('image_to_room', { user: name, room, link: crypted }, () => {
-			writeToScreen(my_message_template.innerHTML, { name, link })
+			writeToScreen(my_message_template, { name, link, is_image: true })
 		})
 	}
 }
@@ -177,9 +177,9 @@ function sendMsg (msg) {
 
 	socket.emit('to_room', { msg: crypted, user: name, room }, ({ erro_msg }) => {
 		if (erro_msg) {
-			writeToScreen(info_template.innerHTML, { info: erro_msg })
+			writeToScreen(info_template, { info: erro_msg })
 		} else {
-			writeToScreen(my_message_template.innerHTML, { name, msg })
+			writeToScreen(my_message_template, { name, msg, is_image: false })
 			escrever.value = ''
 		}
 	})
@@ -187,24 +187,27 @@ function sendMsg (msg) {
 
 function receiveMsg ({ msg, user }) {
 	let decrypted = decrypt(msg)
-	writeToScreen(other_message_template.innerHTML, { name: user, link: decrypted })
+	audio_notificacao.play()
+	writeToScreen(other_message_template, { name: user, msg: decrypted, is_image: false })
 }
 
 function joinMsg ({ msg }) {
-	writeToScreen(inout_template.innerHTML, { msg })
+	writeToScreen(inout_template, { msg })
 }
 
 function leaveMsg ({ msg }) {
-	writeToScreen(inout_template.innerHTML, { msg })
+	writeToScreen(inout_template, { msg })
 }
 
 function changeName ({ msg }) {
-	writeToScreen(info_template.innerHTML, { info: msg })
+	writeToScreen(info_template, { info: msg })
 }
 
 function roomImage ({ user, link }) {
 	let decrypted = decrypt(link)
-	writeToScreen(other_message_template.innerHTML, { name: user, msg: decrypted })
+	audio_notificacao.play()
+	console.log(link, decrypted)
+	writeToScreen(other_message_template, { name: user, link: decrypted, is_image: true })
 }
 
 function crypt (msg = '') {
@@ -227,7 +230,8 @@ escrever.addEventListener('keyup', (e) => {
 
 		if (!is) {
 			if (!room) {
-				writeToScreen(info_template.innerHTML, "Entre em alguma sala usando join nome_da_sala")
+				console.log('teste')
+				writeToScreen(info_template, { info: "Entre em alguma sala usando join nome_da_sala" })
 			} else {
 				sendMsg(escrever.value)
 			}
@@ -246,7 +250,7 @@ window.addEventListener('focusin', (e) => {
 })
 
 function writeToScreen (template, params) {
-	let temp = Mustache.render(template, params)
+	let temp = Mustache.render(template.innerHTML, params)
 
 	mensagens.innerHTML += temp
 	mensagens.scrollTop = mensagens.scrollHeight

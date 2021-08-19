@@ -34,6 +34,14 @@
         padding: 15px;
     }
 
+    #mensagens img {
+        display: block;
+        margin: 20px 0;
+        border-radius: 5px;
+        max-width: 300px;
+        max-height: 300px;
+    }
+
     #escrever_box {
         display: flex;
         border-top: 1px solid rgba(255,255,255,.2);
@@ -127,7 +135,7 @@
             <img src="{{link}}" alt="Imagem enviada por {{name}}">
         {{/link}}
         {{^link}}
-            <span class>{{msg}}</span>
+            <span>{{msg}}</span>
         {{/link}}
     </p>
 </script>
@@ -139,14 +147,14 @@
             <img src="{{link}}" alt="Imagem enviada por {{name}}">
         {{/link}}
         {{^link}}
-            <span class>{{msg}}</span>
+            <span>{{msg}}</span>
         {{/link}}
     </p>
 </script>
 
 <script type="text/template" id="info_template">
     <p class="aviso">
-        {{info}}
+        >>> <span>{{info}}</span>
     </p>
 </script>
 
@@ -163,11 +171,12 @@
 
     <div id="escrever_box">
         <span>>></span> <input id="escrever" placeholder="type something" autofocus />
+        <audio src="/notification.wav" id="audio_notificacao"></audio>
     </div>
 </body>
 
 <!-- test-io-client.html -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.1/mustache.min.js" integrity="sha512-3GRj7sme01zpWwRNPNy48Rda1bD9cq34lqYG5vb8ZXGc+wRqsoBJ3+AC25IYW5w5SrWlzHqIpNIxZt5QF9sXLg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js" integrity="sha256-/H4YS+7aYb9kJ5OKhFYPUjSJdrtV6AeyJOtTkw6X72o=" crossorigin="anonymous"></script>
 <script src="/client.js"></script>
