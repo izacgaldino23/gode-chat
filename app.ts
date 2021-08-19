@@ -1,4 +1,4 @@
-import { http } from './server'
+import { io, http } from './server'
 import './socket/usuario'
 
 http.listen(process.env.PORT, () => {

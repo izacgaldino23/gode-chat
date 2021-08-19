@@ -5,9 +5,11 @@ let users: { [key: string]: any } = {}
 let rooms: Array<string> = []
 
 io.on('connect', (socket: Socket) => {
+	socket.emit('reload', {})
 
-	socket.on('in', ({ name }) => {
+	socket.on('in', ({ name }, callback) => {
 		users[name] = socket.id
+		callback()
 	})
 
 	socket.on('list_rooms', (params, callback) => {
@@ -85,6 +87,12 @@ io.on('connect', (socket: Socket) => {
 	})
 
 	socket.on('change_name', ({ old_name, name, room }, callback) => {
+		if (name in users) {
+			console.log(users)
+			callback({ erro_msg: 'Nome já está sendo usado' })
+			return
+		}
+
 		if (old_name) {
 			delete users[old_name]
 		}
@@ -94,7 +102,7 @@ io.on('connect', (socket: Socket) => {
 			socket.to(room).emit('change_name', { msg: `${old_name} agora é ${name}` })
 		}
 
-		callback()
+		callback({})
 	})
 
 	socket.on('disconnecting', () => {

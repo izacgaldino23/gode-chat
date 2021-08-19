@@ -10,12 +10,13 @@ const commands = {
 
 let socket = io.connect('http://192.168.111.142:9080/');
 let name, room, key
+let primeira_vez = true
 
 function init () {
 	help()
 	if (localStorage.name) {
 		name = localStorage.name
-		socket.emit('in', { name })
+		socket.emit('in', { name }, () => { })
 		writeToScreen(info_template, { info: `Bem-vindo ${name} :D` })
 	}
 
@@ -24,6 +25,9 @@ function init () {
 	socket.on('leave_msg', leaveMsg)
 	socket.on('change_name', changeName)
 	socket.on('room_image', roomImage)
+
+	socket.on('reload', reload)
+	socket.on('disconnect', disconnect)
 }
 
 function isCommand (command = '') {
@@ -144,11 +148,16 @@ function setName (parts = []) {
 		return
 	}
 	let old_name = name
-	name = parts[ 1 ]
+	let new_name = parts[ 1 ]
 
-	localStorage.name = name
+	socket.emit('change_name', { old_name, name: new_name, room }, ({ erro_msg }) => {
+		if (erro_msg) {
+			writeToScreen(info_template, { info: erro_msg })
+			return
+		}
+		name = new_name
+		localStorage.name = name
 
-	socket.emit('change_name', { old_name, name, room }, () => {
 		writeToScreen(info_template, { info: `Nome alterado para ${name}` })
 	})
 }
@@ -220,6 +229,26 @@ function decrypt (msg = '') {
 	let decrypted = CryptoJS.AES.decrypt(msg, key).toString(CryptoJS.enc.Utf8)
 
 	return decrypted
+}
+
+function reload ({ }) {
+	writeToScreen(info_template, { info: "Servidor voltou :D" })
+
+	if (localStorage.name) {
+		name = localStorage.name
+
+		socket.emit('in', { name }, () => {
+			if (room) {
+				let temp = room
+				room = undefined
+				join([ 'join', temp ])
+			}
+		})
+	}
+}
+
+function disconnect () {
+	writeToScreen(info_template, { info: "Servidor caiu, restaurando..." })
 }
 
 // ================= eventos componentes
