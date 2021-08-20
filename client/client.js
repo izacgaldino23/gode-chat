@@ -110,7 +110,7 @@ function join (parts = []) {
 	room = parts[ 1 ]
 
 	socket.emit('join', { name, room }, ({ msg, k }) => {
-		writeToScreen(info_template, { info: msg })
+		writeToScreen(info_template, { info: msg, tag: '+++' })
 		key = k
 	})
 }
@@ -121,7 +121,7 @@ function leave () {
 		return
 	}
 
-	writeToScreen(info_template, { info: `Você saiu da sala ${room}` })
+	writeToScreen(info_template, { info: `Você saiu da sala ${room}`, tag: '---' })
 
 	socket.emit('leave', { user: name, room })
 
