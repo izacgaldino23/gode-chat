@@ -100,7 +100,7 @@
 </style>
 
 <script type="text/template" id="help_template">
-    <p>======== COMMANDS ========</p>
+    <p>=============== COMANDOS ===============</p>
     <br />
     <table>
         {{#commands}}
@@ -113,7 +113,7 @@
         {{/commands}}
     </table>
     <br />
-    <p>==========================</p>
+    <p>========================================</p>
     <br />
 </script>
 
@@ -128,11 +128,23 @@
     <br />
 </script>
 
+<script type="text/template" id="users_template">
+    <br />
+    <p>========== USUÁRIOS ==========</p>
+    <br />
+        {{#users}}
+        <p><strong>{{.}}</strong></p>
+        {{/users}}
+    <br />
+    <p>==============================</p>
+    <br />
+</script>
+
 <script type="text/template" id="my_message_template">
     <p class="msg me">
         <strong>#{{name}}</strong>:
         {{#link}}
-            <img src="{{link}}" alt="Imagem enviada por {{name}}">
+            <img src="{{link}}" alt="Imagem enviada por {{name}}" onload="loadedImage()">
         {{/link}}
         {{^link}}
             <span>{{msg}}</span>
@@ -144,7 +156,7 @@
     <p class="msg">
         <strong>#{{name}}</strong>:
         {{#link}}
-            <img src="{{link}}" alt="Imagem enviada por {{name}}">
+            <img src="{{link}}" alt="Imagem enviada por {{name}}" onload="loadedImage()">
         {{/link}}
         {{^link}}
             <span>{{msg}}</span>
@@ -154,14 +166,14 @@
 
 <script type="text/template" id="info_template">
     <p class="aviso">
-        >>> <span>{{info}}</span>
+        {{tag}}{{^tag}}>>>{{/tag}} <span>{{info}}</span>
     </p>
 </script>
 
 <script type="text/template" id="inout_template">
     <br>
     <p class="inout">
-        >>> <span>{{msg}}</span>
+        {{tag}}{{^tag}}>>>{{/tag}} <span>{{msg}}</span>
     </p>
 </script>
 
@@ -170,7 +182,7 @@
     </div>
 
     <div id="escrever_box">
-        <span>>></span> <input id="escrever" placeholder="type something" autofocus />
+        <span>>></span> <input id="escrever" placeholder="digite algo" autofocus />
         <audio src="/notification.wav" id="audio_notificacao"></audio>
     </div>
 </body>

@@ -129,6 +129,17 @@ io.on('connect', (socket: Socket) => {
 			})
 		}
 	})
+
+	socket.on('list_users', ({ room }, callback) => {
+		io.in(room).allSockets().then((allSockets) => {
+			let users_in_room = []
+			for (let socket_id of Array.from(allSockets)) {
+				users_in_room.push(getUserName(socket_id))
+			}
+
+			callback({ users_in_room })
+		})
+	})
 })
 
 function verifyUserLogin(user_name: string) {
@@ -137,4 +148,12 @@ function verifyUserLogin(user_name: string) {
 	}
 
 	return true
+}
+
+function getUserName(socket_id: string) {
+	for (let i in users) {
+		if (users[i] == socket_id) {
+			return i
+		}
+	}
 }

@@ -3,6 +3,7 @@ const commands = {
 	'list': { args: '', description: 'Lista todas as salas' },
 	'join': { args: 'nome_da_sala', description: 'Cria/Entra em uma sala' },
 	'image': { args: 'link', description: 'Envia uma imagem' },
+	'users': { args: '', description: 'Lista usuários de uma sala' },
 	'clear': { args: '', description: 'Limpa janela de msgs' },
 	'leave': { args: '', description: 'Sai de uma sala' },
 	'help': { args: '', description: 'Mostra comandos' },
@@ -64,6 +65,9 @@ function manageCommands (command = '', parts = []) {
 			break
 		case 'image':
 			image(parts)
+			break
+		case 'users':
+			listUsers()
 			break
 	}
 }
@@ -180,6 +184,16 @@ function image (parts = []) {
 	}
 }
 
+function listUsers () {
+	if (!room) {
+		writeToScreen(info_template, { info: 'Entre em uma sala usando join nome_da_dala' })
+		return
+	}
+	socket.emit('list_users', { room }, ({ users_in_room }) => {
+		writeToScreen(users_template, { users: users_in_room })
+	})
+}
+
 // ================ listening funtions
 function sendMsg (msg) {
 	let crypted = crypt(msg)
@@ -201,11 +215,11 @@ function receiveMsg ({ msg, user }) {
 }
 
 function joinMsg ({ msg }) {
-	writeToScreen(inout_template, { msg })
+	writeToScreen(inout_template, { msg, tag: '+++' })
 }
 
 function leaveMsg ({ msg }) {
-	writeToScreen(inout_template, { msg })
+	writeToScreen(inout_template, { msg, tag: '---' })
 }
 
 function changeName ({ msg }) {
@@ -277,6 +291,10 @@ escrever.addEventListener('focusout', () => {
 window.addEventListener('focusin', (e) => {
 	escrever.focus()
 })
+
+function loadedImage () {
+	mensagens.scrollTop = mensagens.scrollHeight
+}
 
 function writeToScreen (template, params) {
 	let temp = Mustache.render(template.innerHTML, params)
