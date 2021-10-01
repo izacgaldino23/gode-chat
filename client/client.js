@@ -9,6 +9,10 @@ const commands = {
 	'help': { args: '', description: 'Mostra comandos' },
 }
 
+
+
+const dataNow = dateFormat()
+
 let socket = io.connect('http://192.168.111.142:9080/');
 let name, room, key
 let primeira_vez = true
@@ -138,7 +142,7 @@ function help () {
 		c.push({ name: i, args: commands[ i ].args, description: commands[ i ].description })
 	}
 
-	writeToScreen(help_template, { commands: c })
+	writeToScreen(help_template, { commands: c, data: dataNow })
 }
 
 function setName (parts = []) {
@@ -303,4 +307,20 @@ function writeToScreen (template, params) {
 	mensagens.scrollTop = mensagens.scrollHeight
 }
 
+function dateFormat () {
+	function adicionaZeroData (numero) {
+		return numero <= 9 ? "0" + numero : numero;
+	}
+
+	let dataAtual = new Date();
+	let dataAtualFormatada = (
+		adicionaZeroData(dataAtual.getDate().toString()) + "/" +
+		(adicionaZeroData(dataAtual.getMonth() + 1).toString()) + "/" +
+		dataAtual.getFullYear()
+	);
+
+	return dataAtualFormatada
+}
+
 window.addEventListener("load", init, false);
+
