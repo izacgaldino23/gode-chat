@@ -11,7 +11,7 @@ const commands = {
 
 
 
-const dataNow = date_format()
+const dataNow = dateFormat()
 
 let socket = io.connect('http://192.168.111.142:9080/');
 let name, room, key
@@ -307,19 +307,20 @@ function writeToScreen (template, params) {
 	mensagens.scrollTop = mensagens.scrollHeight
 }
 
-function date_format () {
+function dateFormat () {
 	function adicionaZeroData (numero) {
-		return numero <= 9 ? "0" + numero : numero
-
-		let dataAtual = new Date();
-		let dataAtualFormatada = (
-			adicionaZeroData(dataAtual.getDate().toString()) + "/" +
-			(adicionaZeroData(dataAtual.getMonth() + 1).toString()) + "/" +
-			dataAtual.getFullYear()
-		);
-
-		return dataAtualFormatada
+		return numero <= 9 ? "0" + numero : numero;
 	}
+
+	let dataAtual = new Date();
+	let dataAtualFormatada = (
+		adicionaZeroData(dataAtual.getDate().toString()) + "/" +
+		(adicionaZeroData(dataAtual.getMonth() + 1).toString()) + "/" +
+		dataAtual.getFullYear()
+	);
+
+	return dataAtualFormatada
 }
+
 window.addEventListener("load", init, false);
 
