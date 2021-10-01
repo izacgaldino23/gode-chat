@@ -17,7 +17,7 @@ let socket = io.connect('http://192.168.111.142:9080/');
 let name, room, key
 let primeira_vez = true
 
-function init() {
+function init () {
 	help()
 	if (localStorage.name) {
 		name = localStorage.name
@@ -35,11 +35,11 @@ function init() {
 	socket.on('disconnect', disconnect)
 }
 
-function isCommand(command = '') {
+function isCommand (command = '') {
 	let parts = command.split(' ')
 
-	if (parts[0] in commands) { // Verifica se comando existe
-		manageCommands(parts[0], parts)
+	if (parts[ 0 ] in commands) { // Verifica se comando existe
+		manageCommands(parts[ 0 ], parts)
 
 		return true
 	}
@@ -47,7 +47,7 @@ function isCommand(command = '') {
 	return false
 }
 
-function manageCommands(command = '', parts = []) {
+function manageCommands (command = '', parts = []) {
 	switch (command) {
 		case 'list':
 			list()
@@ -77,7 +77,7 @@ function manageCommands(command = '', parts = []) {
 }
 
 // ================ action funtions 
-function list() {
+function list () {
 	socket.emit('list_rooms', {}, (rooms) => {
 		if (rooms.length > 0) {
 			let salas = []
@@ -90,7 +90,7 @@ function list() {
 	})
 }
 
-function join(parts = []) {
+function join (parts = []) {
 	if (!name || name == '') {
 		writeToScreen(info_template, { info: 'Antes de entrar em uma sala escolha um nome usando o comando name seu_nome' })
 		return
@@ -106,12 +106,12 @@ function join(parts = []) {
 		return
 	}
 
-	if (!parts[1] || parts[1] == '') {
+	if (!parts[ 1 ] || parts[ 1 ] == '') {
 		writeToScreen(info_template, { info: 'Nome da sala inválida' })
 		return
 	}
 
-	room = parts[1]
+	room = parts[ 1 ]
 
 	socket.emit('join', { name, room }, ({ msg, k }) => {
 		writeToScreen(info_template, { info: msg, tag: '+++' })
@@ -119,7 +119,7 @@ function join(parts = []) {
 	})
 }
 
-function leave() {
+function leave () {
 	if (!room) {
 		writeToScreen(info_template, { info: 'Você não está em nenhuma sala use o comando join para entrar em uma sala' })
 		return
@@ -132,31 +132,31 @@ function leave() {
 	room = undefined
 }
 
-function clear() {
+function clear () {
 	mensagens.innerHTML = ""
 }
 
-function help() {
+function help () {
 	let c = []
 	for (let i in commands) {
-		c.push({ name: i, args: commands[i].args, description: commands[i].description })
+		c.push({ name: i, args: commands[ i ].args, description: commands[ i ].description })
 	}
 
 	writeToScreen(help_template, { commands: c, data: dataNow })
 }
 
-function setName(parts = []) {
+function setName (parts = []) {
 	if (parts.length != 2) {
 		writeToScreen(info_template, { info: 'O formato do comando deve ser: name seu_nome' })
 		return
 	}
 
-	if (!parts[1] || parts[1] == '') {
+	if (!parts[ 1 ] || parts[ 1 ] == '') {
 		writeToScreen(info_template, { info: 'Nome inválido' })
 		return
 	}
 	let old_name = name
-	let new_name = parts[1]
+	let new_name = parts[ 1 ]
 
 	socket.emit('change_name', { old_name, name: new_name, room }, ({ erro_msg }) => {
 		if (erro_msg) {
@@ -170,7 +170,7 @@ function setName(parts = []) {
 	})
 }
 
-function image(parts = []) {
+function image (parts = []) {
 	if (!room) {
 		writeToScreen(info_template, "Entre em alguma sala usando join nome_da_sala")
 	} else {
@@ -179,7 +179,7 @@ function image(parts = []) {
 			return
 		}
 
-		let link = parts[1]
+		let link = parts[ 1 ]
 
 		let crypted = crypt(link)
 		socket.emit('image_to_room', { user: name, room, link: crypted }, () => {
@@ -188,7 +188,7 @@ function image(parts = []) {
 	}
 }
 
-function listUsers() {
+function listUsers () {
 	if (!room) {
 		writeToScreen(info_template, { info: 'Entre em uma sala usando join nome_da_dala' })
 		return
@@ -199,7 +199,7 @@ function listUsers() {
 }
 
 // ================ listening funtions
-function sendMsg(msg) {
+function sendMsg (msg) {
 	let crypted = crypt(msg)
 
 	socket.emit('to_room', { msg: crypted, user: name, room }, ({ erro_msg }) => {
@@ -212,44 +212,44 @@ function sendMsg(msg) {
 	})
 }
 
-function receiveMsg({ msg, user }) {
+function receiveMsg ({ msg, user }) {
 	let decrypted = decrypt(msg)
 	audio_notificacao.play()
 	writeToScreen(other_message_template, { name: user, msg: decrypted, is_image: false })
 }
 
-function joinMsg({ msg }) {
+function joinMsg ({ msg }) {
 	writeToScreen(inout_template, { msg, tag: '+++' })
 }
 
-function leaveMsg({ msg }) {
+function leaveMsg ({ msg }) {
 	writeToScreen(inout_template, { msg, tag: '---' })
 }
 
-function changeName({ msg }) {
+function changeName ({ msg }) {
 	writeToScreen(info_template, { info: msg })
 }
 
-function roomImage({ user, link }) {
+function roomImage ({ user, link }) {
 	let decrypted = decrypt(link)
 	audio_notificacao.play()
 	console.log(link, decrypted)
 	writeToScreen(other_message_template, { name: user, link: decrypted, is_image: true })
 }
 
-function crypt(msg = '') {
+function crypt (msg = '') {
 	let encrypted = CryptoJS.AES.encrypt(msg, key).toString()
 
 	return encrypted
 }
 
-function decrypt(msg = '') {
+function decrypt (msg = '') {
 	let decrypted = CryptoJS.AES.decrypt(msg, key).toString(CryptoJS.enc.Utf8)
 
 	return decrypted
 }
 
-function reload({ }) {
+function reload ({ }) {
 	writeToScreen(info_template, { info: "Servidor voltou :D" })
 
 	if (localStorage.name) {
@@ -259,13 +259,13 @@ function reload({ }) {
 			if (room) {
 				let temp = room
 				room = undefined
-				join(['join', temp])
+				join([ 'join', temp ])
 			}
 		})
 	}
 }
 
-function disconnect() {
+function disconnect () {
 	writeToScreen(info_template, { info: "Servidor caiu, restaurando..." })
 }
 
@@ -296,34 +296,30 @@ window.addEventListener('focusin', (e) => {
 	escrever.focus()
 })
 
-function loadedImage() {
+function loadedImage () {
 	mensagens.scrollTop = mensagens.scrollHeight
 }
 
-function writeToScreen(template, params) {
+function writeToScreen (template, params) {
 	let temp = Mustache.render(template.innerHTML, params)
 
 	mensagens.innerHTML += temp
 	mensagens.scrollTop = mensagens.scrollHeight
 }
 
-function date_format() {
-	function adicionaZeroData(numero) {
-		if (numero <= 9)
-			return "0" + numero;
-		else
-			return numero;
+function date_format () {
+	function adicionaZeroData (numero) {
+		return numero <= 9 ? "0" + numero : numero
+
+		let dataAtual = new Date();
+		let dataAtualFormatada = (
+			adicionaZeroData(dataAtual.getDate().toString()) + "/" +
+			(adicionaZeroData(dataAtual.getMonth() + 1).toString()) + "/" +
+			dataAtual.getFullYear()
+		);
+
+		return dataAtualFormatada
 	}
-
-	let dataAtual = new Date();
-	let dataAtualFormatada = (
-		adicionaZeroData(dataAtual.getDate().toString()) + "/" +
-		(adicionaZeroData(dataAtual.getMonth() + 1).toString()) + "/" +
-		dataAtual.getFullYear()
-	);
-
-	return dataAtualFormatada
 }
-
 window.addEventListener("load", init, false);
 
