@@ -1,5 +1,5 @@
 <head>
-	<meta charset="utf-8">
+    <meta charset="utf-8">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap" rel="stylesheet">
@@ -44,7 +44,7 @@
 
     #escrever_box {
         display: flex;
-        border-top: 1px solid rgba(255,255,255,.2);
+        border-top: 1px solid rgba(255, 255, 255, .2);
         align-items: center;
     }
 
@@ -72,7 +72,9 @@
         word-wrap: break-word;
     }
 
-    .msg span, .inout span, .celula_opacity {
+    .msg span,
+    .inout span,
+    .celula_opacity {
         opacity: .75;
     }
 
@@ -89,18 +91,20 @@
         width: 4px;
         height: 8px;
     }
+
     *::-webkit-scrollbar-track {
         background-color: rgba(0, 0, 0, 0.4);
         border-radius: 10px;
     }
+
     *::-webkit-scrollbar-thumb {
-        background-color: rgba(255,255,255,.5);
+        background-color: rgba(255, 255, 255, .5);
         border-radius: 10px;
     }
 </style>
 
 <script type="text/template" id="help_template">
-    <p>=============== COMANDOS ===============</p>
+    <p>=============== COMANDOS - {{data}} ===============</p>
     <br />
     <table>
         {{#commands}}
@@ -113,7 +117,7 @@
         {{/commands}}
     </table>
     <br />
-    <p>========================================</p>
+    <p>====================================================</p>
     <br />
 </script>
 
@@ -190,5 +194,6 @@
 <!-- test-io-client.html -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js" integrity="sha256-/H4YS+7aYb9kJ5OKhFYPUjSJdrtV6AeyJOtTkw6X72o=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"
+    integrity="sha256-/H4YS+7aYb9kJ5OKhFYPUjSJdrtV6AeyJOtTkw6X72o=" crossorigin="anonymous"></script>
 <script src="/client.js"></script>
