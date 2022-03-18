@@ -1,0 +1,16 @@
+.write-box {
+	display: flex;
+	border-top: 1px solid rgba(255, 255, 255, .2);
+	align-items: center;
+}
+
+.write-box span {
+	padding-left: 10px;
+}
+
+.write {
+	padding: 20px 15px;
+	background: transparent;
+	color: white;
+	width: 100%;
+}

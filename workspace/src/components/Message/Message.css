@@ -1,0 +1,23 @@
+.msg img {
+    display: block;
+    margin: 20px 0;
+    border-radius: 5px;
+    max-width: 300px;
+    max-height: 300px;
+}
+
+.msg {
+    margin-bottom: 5px;
+    display: block;
+    word-wrap: break-word;
+}
+
+.msg span,
+.inout span,
+.celula_opacity {
+    opacity: .75;
+}
+
+.me strong {
+    color: #09edc3
+}
