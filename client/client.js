@@ -13,7 +13,7 @@ const commands = {
 
 const dataNow = dateFormat()
 
-let socket = io.connect('http://192.168.111.142:9080/');
+let socket = io.connect('http://192.168.1.120:9080/');
 let name, room, key
 let primeira_vez = true
 

@@ -104,7 +104,11 @@ io.on('connect', (socket: Socket) => {
 			socket.to(room).emit('change_name', { msg: `${old_name} agora é ${name}` })
 		}
 
-		console.log(`${old_name} agora é ${name}`)
+		if (old_name) {
+			console.log(`${old_name} agora é ${name}`)
+		} else {
+			console.log(`${name} entrou`)
+		}
 		callback({})
 	})
 
