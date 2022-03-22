@@ -3,12 +3,15 @@ import { createServer } from 'http'
 import { Server, Socket } from 'socket.io'
 import dotenv from 'dotenv'
 import path from 'path'
+import cors from 'cors'
 
 dotenv.config()
 
 const app = express()
 const http = createServer(app)
-const io = new Server(http)
+const io = new Server(http, {
+	cors: { origin: "*" }
+})
 
 app.use(express.static(path.resolve('client')));
 app.get('/', (req, res) => {
@@ -16,5 +19,7 @@ app.get('/', (req, res) => {
 })
 
 app.use(express.json())
+
+app.use(cors({}))
 
 export { io, http }

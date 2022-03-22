@@ -1,5 +1,7 @@
-export default function Info () {
+export function Info ({ tag, info }) {
 	return (
-		<div className='info'></div>
+		<p className="info">
+			{tag ? tag : '>>>'} <span>{info}</span>
+		</p>
 	)
 }

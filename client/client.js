@@ -9,8 +9,6 @@ const commands = {
 	'help': { args: '', description: 'Mostra comandos' },
 }
 
-
-
 const dataNow = dateFormat()
 
 let socket = io.connect('http://192.168.1.120:9080/');
