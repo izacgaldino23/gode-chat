@@ -1,3 +1,5 @@
+import './Info.css'
+
 export function Info ({ tag, info }) {
 	return (
 		<p className="info">

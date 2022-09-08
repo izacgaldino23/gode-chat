@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-// import aes from 'crypto-js/aes'
+// import crypto from "crypto-js"
+import aes from 'crypto-js/aes'
 // import socketIOClient from "socket.io-client"
 
 import { Input } from "../../components/Input";
@@ -21,9 +22,10 @@ export function Home () {
 
 	useEffect(() => {
 		if (localStorage.name) {
-			setName(localStorage.name)
-			Socket.conn.emit('in', { name }, () => {
-				addItem({ type: 'info', info: `Bem-vindo ${name} :D` })
+			let newName = localStorage.name
+			setName(newName)
+			Socket.conn.emit('in', { newName }, () => {
+				addItem({ type: 'info', info: `Bem-vindo ${newName} :D` })
 			})
 		}
 
@@ -31,12 +33,12 @@ export function Home () {
 	}, [])
 
 	function setServerName (parts = []) {
-		if (parts.length != 2) {
+		if (parts.length !== 2) {
 			addItem({ type: 'info', info: 'O formato do comando deve ser: name seu_nome' })
 			return
 		}
 
-		if (!parts[ 1 ] || parts[ 1 ] == '') {
+		if (!parts[ 1 ] || parts[ 1 ] === '') {
 			addItem({ type: 'info', info: 'Nome inválido' })
 			return
 		}
@@ -56,7 +58,7 @@ export function Home () {
 	}
 
 	function join (parts = []) {
-		if (!name || name == '') {
+		if (!name || name === '') {
 			addItem({ info: 'Antes de entrar em uma sala escolha um nome usando o comando name seu_nome' })
 			return
 		}
@@ -66,12 +68,12 @@ export function Home () {
 			return
 		}
 
-		if (parts.length != 2) {
+		if (parts.length !== 2) {
 			addItem({ info: 'O formato do comando deve ser: join nome_da_sala' })
 			return
 		}
 
-		if (!parts[ 1 ] || parts[ 1 ] == '') {
+		if (!parts[ 1 ] || parts[ 1 ] === '') {
 			addItem({ info: 'Nome da sala inválida' })
 			return
 		}
@@ -135,16 +137,19 @@ export function Home () {
 	}
 
 	function sendMsg (msg) {
-		// let crypted = crypt(msg)
+		console.log(key)
+		let crypted = aes.encrypt(msg, key).toString()
 
-		// socket.emit('to_room', { msg: crypted, user: name, room }, ({ erro_msg }) => {
-		// 	if (erro_msg) {
-		// 		writeToScreen(info_template, { info: erro_msg })
-		// 	} else {
-		// 		writeToScreen(my_message_template, { name, msg, is_image: false })
-		// 		escrever.value = ''
-		// 	}
-		// })
+		socket.emit('to_room', { msg: crypted, user: name, room }, ({ erro_msg }) => {
+			if (erro_msg) {
+				addItem({ info: erro_msg })
+				// writeToScreen(info_template, { info: erro_msg })
+			} else {
+				// writeToScreen(my_message_template, { name, msg, is_image: false })
+				addItem({ type: 'message', text: msg, user: name })
+				setText('')
+			}
+		})
 	}
 
 	function inputHandleChange (event) {
